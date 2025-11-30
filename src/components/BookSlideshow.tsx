@@ -96,7 +96,7 @@ export const BookSlideshow = () => {
     // 3개 구역 정의 (왼쪽, 중앙, 오른쪽)
     const dropZones = [
       5760 * 0.25,  // 1번: 왼쪽 (35
-      5760 * 0.75,  // 3번: 오른쪽 (65
+      5760 * 0.75,  // 3번: 오른쪽 (65 
       5760 * 0.5    // 2번: 중앙 (50
     ];
 
@@ -110,8 +110,7 @@ export const BookSlideshow = () => {
       restitution: 0.3,
       frictionAir: 0.01,
       friction: 0.8,
-      density: 0.001,
-      isSensor: false // 충돌 감지 활성화
+      density: 0.001
     });
 
     // 랜덤 색상 선택
@@ -137,22 +136,16 @@ export const BookSlideshow = () => {
     Body.setAngularVelocity(bookBody, (Math.random() - 0.5) * 0.05);
 
     // 업데이트 루프
-    let animationId: number;
     const updateLoop = () => {
       const { x, y } = bookBody.position;
       displayDiv.style.left = `${x}px`;
       displayDiv.style.top = `${y}px`;
       displayDiv.style.transform = `translate(-50%, -50%) rotate(${bookBody.angle}rad)`;
-      animationId = requestAnimationFrame(updateLoop);
+      requestAnimationFrame(updateLoop);
     };
-    animationId = requestAnimationFrame(updateLoop);
+    updateLoop();
 
-    // cleanup 함수 반환 - requestAnimationFrame 중지
-    return () => {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
-    };
+    // cleanup은 필요 없음 - 계속 쌓여야 하므로
 
   }, [currentIndex, books]);
 
