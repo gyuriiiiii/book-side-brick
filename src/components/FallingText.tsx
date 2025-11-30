@@ -61,12 +61,21 @@ export const FallingText = ({
 
     // 글자별로 물리 바디 생성
     const charSpans = textRef.current.querySelectorAll('.char');
+
+    // 떨어지는 위치를 3개 구역으로 나누기 (왼쪽, 중앙, 오른쪽)
+    const dropZones = [
+      width * 0.25,  // 왼쪽 (25% 지점)
+      width * 0.5,   // 중앙 (50% 지점)
+      width * 0.75   // 오른쪽 (75% 지점)
+    ];
+
     const charBodies = Array.from(charSpans).map((elem, index) => {
       const htmlElem = elem as HTMLElement;
       const rect = htmlElem.getBoundingClientRect();
 
-      // 화면 중앙 상단에서 시작
-      const x = width / 2 + (Math.random() - 0.5) * 100;
+      // 순차적으로 각 구역에서 떨어지도록 설정
+      const zoneIndex = index % dropZones.length;
+      const x = dropZones[zoneIndex] + (Math.random() - 0.5) * 80;
       const y = -50; // 화면 위에서 시작
 
       const body = Bodies.rectangle(x, y, rect.width, rect.height, {
