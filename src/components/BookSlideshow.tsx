@@ -96,7 +96,7 @@ export const BookSlideshow = () => {
     // 3개 구역 정의 (왼쪽, 중앙, 오른쪽)
     const dropZones = [
       5760 * 0.25,  // 1번: 왼쪽 (35
-      5760 * 0.75,  // 3번: 오른쪽 (65 
+      5760 * 0.75,  // 3번: 오른쪽 (65
       5760 * 0.5    // 2번: 중앙 (50
     ];
 
@@ -136,16 +136,22 @@ export const BookSlideshow = () => {
     Body.setAngularVelocity(bookBody, (Math.random() - 0.5) * 0.05);
 
     // 업데이트 루프
+    let animationId: number;
     const updateLoop = () => {
       const { x, y } = bookBody.position;
       displayDiv.style.left = `${x}px`;
       displayDiv.style.top = `${y}px`;
       displayDiv.style.transform = `translate(-50%, -50%) rotate(${bookBody.angle}rad)`;
-      requestAnimationFrame(updateLoop);
+      animationId = requestAnimationFrame(updateLoop);
     };
-    updateLoop();
+    animationId = requestAnimationFrame(updateLoop);
 
-    // cleanup은 필요 없음 - 계속 쌓여야 하므로
+    // cleanup 함수 반환 - requestAnimationFrame 중지
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
 
   }, [currentIndex, books]);
 
