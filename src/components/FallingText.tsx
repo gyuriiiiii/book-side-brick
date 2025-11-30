@@ -34,8 +34,9 @@ export const FallingText = ({
     if (width <= 0 || height <= 0) return;
 
     // 엔진 생성
-    const engine = Engine.create();
-    engine.world.gravity.y = 1;
+    const engine = Engine.create({
+      gravity: { x: 0, y: 2.5 }
+    });
     engineRef.current = engine;
 
     // 렌더러 생성
