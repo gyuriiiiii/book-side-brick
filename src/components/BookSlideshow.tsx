@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { TOP_50_BORROWED_BOOKS } from '../data/top50BorrowedBooks';
 import Matter from 'matter-js';
 
-const SLIDE_DURATION = 5000; // 5초
+const SLIDE_DURATION = 3000; // 3초
 
 // 색상 배열: 진한 파랑, 진한 보라색, 검정
 const COLORS = ['#1e3a8a', '#581c87', '#000000'];
@@ -26,8 +26,9 @@ export const BookSlideshow = () => {
     const height = 1080;
 
     // 엔진 생성
-    const engine = Engine.create();
-    engine.world.gravity.y = 1;
+    const engine = Engine.create({
+      gravity: { x: 0, y: 1 }
+    });
     engineRef.current = engine;
 
     // 렌더러 생성
@@ -92,8 +93,16 @@ export const BookSlideshow = () => {
     const rect = tempDiv.getBoundingClientRect();
     containerRef.current.removeChild(tempDiv);
 
-    // 책 제목 전체를 하나의 바디로 생성
-    const x = 5760 / 2;
+    // 3개 구역 정의 (왼쪽, 중앙, 오른쪽)
+    const dropZones = [
+      5760 * 0.25,  // 1번: 왼쪽 (25% 지점)
+      5760 * 0.75,  // 3번: 오른쪽 (75% 지점)
+      5760 * 0.5    // 2번: 중앙 (50% 지점)
+    ];
+
+    // 순서대로 1번 -> 3번 -> 2번 위치 선택
+    const zoneIndex = currentIndex % dropZones.length;
+    const x = dropZones[zoneIndex];
     const y = -200;
 
     const bookBody = Bodies.rectangle(x, y, rect.width, rect.height, {
