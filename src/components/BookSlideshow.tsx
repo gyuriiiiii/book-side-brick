@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { TOP_50_BORROWED_BOOKS } from '../data/top50BorrowedBooks';
 import Matter from 'matter-js';
 
-const SLIDE_DURATION = 10000; // 10초
+const SLIDE_DURATION = 5000; // 5초
 
 // 색상 배열: 진한 파랑, 진한 보라색, 검정
 const COLORS = ['#1e3a8a', '#581c87', '#000000'];
