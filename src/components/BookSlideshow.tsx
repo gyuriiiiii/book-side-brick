@@ -110,7 +110,8 @@ export const BookSlideshow = () => {
       restitution: 0.3,
       frictionAir: 0.01,
       friction: 0.8,
-      density: 0.001
+      density: 0.001,
+      isSensor: false // 충돌 감지 활성화
     });
 
     // 랜덤 색상 선택
