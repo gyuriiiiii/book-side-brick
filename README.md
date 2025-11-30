@@ -73,3 +73,4 @@ export default defineConfig([
 ```
 # book-brick
 # book-brick
+# book-brick
