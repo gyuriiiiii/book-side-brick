@@ -3,7 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import { TOP_50_BORROWED_BOOKS } from '../data/top50BorrowedBooks';
 import Matter from 'matter-js';
 
-const SLIDE_DURATION = 3000; // 3초
+const SLIDE_DURATION = 5000; // 3초
+const MAX_DURATION = 4 * 60 * 1000; // 4분 (240초)
 
 // 색상 배열: 진한 파랑, 진한 보라색, 검정
 const COLORS = ['#1e3a8a', '#581c87', '#000000'];
@@ -13,6 +14,7 @@ export const BookSlideshow = () => {
   const engineRef = useRef<Matter.Engine | null>(null);
   const renderRef = useRef<Matter.Render | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isActive, setIsActive] = useState(true); // 활성화 상태
 
   // 상위 50권 대출 도서 데이터 사용
   const books = TOP_50_BORROWED_BOOKS;
@@ -65,8 +67,15 @@ export const BookSlideshow = () => {
       setCurrentIndex((prev) => (prev + 1) % books.length);
     }, SLIDE_DURATION);
 
+    // 4분 후 타이머 중지
+    const stopTimer = setTimeout(() => {
+      clearInterval(timer);
+      setIsActive(false);
+    }, MAX_DURATION);
+
     return () => {
       clearInterval(timer);
+      clearTimeout(stopTimer);
       Render.stop(render);
       Runner.stop(runner);
       World.clear(engine.world, false);
@@ -76,7 +85,7 @@ export const BookSlideshow = () => {
 
   // 새 책 제목 추가
   useEffect(() => {
-    if (!engineRef.current || !containerRef.current || books.length === 0) return;
+    if (!engineRef.current || !containerRef.current || books.length === 0 || !isActive) return;
 
     const currentBook = books[currentIndex];
     const { World, Bodies, Body } = Matter;
@@ -147,7 +156,7 @@ export const BookSlideshow = () => {
 
     // cleanup은 필요 없음 - 계속 쌓여야 하므로
 
-  }, [currentIndex, books]);
+  }, [currentIndex, books, isActive]);
 
   return (
     <div
