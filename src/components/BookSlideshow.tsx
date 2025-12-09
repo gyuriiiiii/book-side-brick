@@ -3,11 +3,21 @@ import { useState, useEffect, useRef } from 'react';
 import { TOP_50_BORROWED_BOOKS } from '../data/top50BorrowedBooks';
 import Matter from 'matter-js';
 
-const SLIDE_DURATION = 5000; // 3초
-const MAX_DURATION = 4 * 60 * 1000; // 4분 (240초)
+const SLIDE_DURATION = 2000; // 2초
+const MAX_DURATION = 2 * 60 * 1000 + 40 * 1000; // 2분 40초 (160초)
 
-// 색상 배열: 진한 파랑, 진한 보라색, 검정
-const COLORS = ['#1e3a8a', '#581c87', '#000000'];
+// 크리스마스 컨셉 색상 배열
+const COLORS = [
+// 빨강
+  '#029696', // 초록
+  '#1e3a8a', // 진한 파랑
+   // 진한 보라색
+  // 주황
+  '#DD6E55', // 금색
+  '#000000', // 검정
+   // 핑크
+ // 청록
+];
 
 export const BookSlideshow = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -116,9 +126,9 @@ export const BookSlideshow = () => {
 
     const bookBody = Bodies.rectangle(x, y, rect.width, rect.height, {
       render: { fillStyle: 'transparent' },
-      restitution: 0.3,
+      restitution: 0.9, // 통통 튀는 효과 증가
       frictionAir: 0.01,
-      friction: 0.8,
+      friction: 0.5,
       density: 0.001
     });
 
@@ -160,7 +170,6 @@ export const BookSlideshow = () => {
 
   return (
     <div
-      ref={containerRef}
       className="bg-white"
       style={{
         width: '5760px',
@@ -168,6 +177,115 @@ export const BookSlideshow = () => {
         position: 'relative',
         overflow: 'hidden'
       }}
-    />
+    >
+      {/* 크리스마스 전구 장식 */}
+      <svg
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '150px',
+          zIndex: 100,
+          pointerEvents: 'none'
+        }}
+      >
+        {/* 빛나는 효과 필터 */}
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* 전선 */}
+        <path
+          d="M 0,50 Q 240,80 480,50 T 960,50 T 1440,50 T 1920,50 T 2400,50 T 2880,50 T 3360,50 T 3840,50 T 4320,50 T 4800,50 T 5280,50 T 5760,50"
+          stroke="#2D3748"
+          strokeWidth="3"
+          fill="none"
+        />
+
+        {/* 전구들 */}
+        {Array.from({ length: 16 }).map((_, i) => {
+          const x = (i * 360) + 180; // 간격 늘림 (240 -> 360)
+          const y = i % 2 === 0 ? 50 : 80;
+          // 노랑과 연한 주황 색상만 사용
+          const lightColors = ['#FCD34D', '#FB923C']; // 노랑, 연한 주황
+          const lightColor = lightColors[i % lightColors.length];
+
+          return (
+            <g key={i}>
+              {/* 전선에서 전구까지 연결선 */}
+              <line x1={x} y1={50} x2={x} y2={y + 15} stroke="#2D3748" strokeWidth="2" />
+
+              {/* 반짝이는 후광 효과 */}
+              <circle
+                cx={x}
+                cy={y + 25}
+                r="30"
+                fill={lightColor}
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.4;0"
+                  dur={`${2.5 + (i % 3) * 0.8}s`}
+                  repeatCount="indefinite"
+                  begin={`${i * 0.3}s`}
+                />
+                <animate
+                  attributeName="r"
+                  values="25;35;25"
+                  dur={`${2.5 + (i % 3) * 0.8}s`}
+                  repeatCount="indefinite"
+                  begin={`${i * 0.3}s`}
+                />
+              </circle>
+
+              {/* 전구 - 원형으로 변경 */}
+              <circle
+                cx={x}
+                cy={y + 25}
+                r="20"
+                fill={lightColor}
+                opacity="0.95"
+                filter="url(#glow)"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0.95;0.6;0.95"
+                  dur={`${2.5 + (i % 3) * 0.8}s`}
+                  repeatCount="indefinite"
+                  begin={`${i * 0.3}s`}
+                />
+              </circle>
+
+              {/* 전구 하이라이트 */}
+              <circle
+                cx={x - 6}
+                cy={y + 19}
+                r="7"
+                fill="white"
+                opacity="0.8"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0.8;0.5;0.8"
+                  dur={`${2.5 + (i % 3) * 0.8}s`}
+                  repeatCount="indefinite"
+                  begin={`${i * 0.3}s`}
+                />
+              </circle>
+            </g>
+          );
+        })}
+      </svg>
+
+      <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
+    </div>
   );
 };
