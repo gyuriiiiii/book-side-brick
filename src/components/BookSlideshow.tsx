@@ -6,17 +6,17 @@ import Matter from 'matter-js';
 const SLIDE_DURATION = 2000; // 2초
 const MAX_DURATION = 2 * 60 * 1000 + 40 * 1000; // 2분 40초 (160초)
 
-// 크리스마스 컨셉 색상 배열
+// 크리스마스 트리 색상 배열
 const COLORS = [
-// 빨강
-  '#029696', // 초록
-  '#1e3a8a', // 진한 파랑
-   // 진한 보라색
-  // 주황
-  '#DD6E55', // 금색
-  '#000000', // 검정
-   // 핑크
- // 청록
+  '#15803d', // 초록 (메인) - 50%
+  '#15803d', // 초록 (메인)
+  '#15803d', // 초록 (메인)
+  '#15803d', // 초록 (메인)
+  '#15803d', // 초록 (메인)
+  '#dc2626', // 빨강 (포인트)
+  '#eab308', // 노랑 (포인트)
+  '#dc2626', // 빨강 (포인트)
+  '#eab308', // 노랑 (포인트)
 ];
 
 export const BookSlideshow = () => {
@@ -112,16 +112,22 @@ export const BookSlideshow = () => {
     const rect = tempDiv.getBoundingClientRect();
     containerRef.current.removeChild(tempDiv);
 
-    // 3개 구역 정의 (왼쪽, 중앙, 오른쪽)
-    const dropZones = [
-      5760 * 0.25,  // 1번: 왼쪽 (35
-      5760 * 0.75,  // 3번: 오른쪽 (65 
-      5760 * 0.5    // 2번: 중앙 (50
-    ];
+    // 트리 모양으로 떨어지는 위치 계산
+    // 아래로 갈수록 범위가 넓어지는 역삼각형 (트리 쌓이면 삼각형)
+    const centerX = 5760 / 2; // 화면 중앙
+    const maxBooks = books.length; // 전체 책 개수
 
-    // 순서대로 1번 -> 3번 -> 2번 위치 선택
-    const zoneIndex = currentIndex % dropZones.length;
-    const x = dropZones[zoneIndex];
+    // currentIndex가 증가할수록 범위가 좁아짐 (트리 위로 갈수록)
+    const progress = currentIndex / maxBooks; // 0 ~ 1
+    const maxWidth = 1800; // 맨 아래 최대 너비
+    const minWidth = 200; // 맨 위 최소 너비
+
+    // 아래에서 위로 갈수록 범위 좁아짐 (progress 증가하면 width 감소)
+    const currentWidth = maxWidth - (maxWidth - minWidth) * progress;
+
+    // 범위 내에서 랜덤 위치
+    const randomOffset = (Math.random() - 0.5) * currentWidth;
+    const x = centerX + randomOffset;
     const y = -200;
 
     const bookBody = Bodies.rectangle(x, y, rect.width, rect.height, {
@@ -170,14 +176,68 @@ export const BookSlideshow = () => {
 
   return (
     <div
-      className="bg-white"
       style={{
         width: '5760px',
         height: '1080px',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        background: 'linear-gradient(to bottom, #e5e7eb 0%, #f3f4f6 100%)'
       }}
     >
+      {/* 배경 블러 효과 */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backdropFilter: 'blur(2px)',
+          zIndex: 1
+        }}
+      />
+
+      {/* 눈 내리는 효과 */}
+      {Array.from({ length: 150 }).map((_, i) => {
+        const startX = Math.random() * 5760;
+        const duration = 8 + Math.random() * 12; // 8-20초
+        const delay = Math.random() * 5; // 0-5초 딜레이
+        const size = 36 + Math.random() * 60; // 36-96px (3배 크기)
+
+        return (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: `${startX}px`,
+              top: '-20px',
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: `${size}px`,
+              opacity: 0.5 + Math.random() * 0.5,
+              zIndex: 2,
+              animation: `snowfall ${duration}s linear ${delay}s infinite`,
+              pointerEvents: 'none',
+              fontWeight: 'bold'
+            }}
+          >
+            *
+          </div>
+        );
+      })}
+
+      <style>
+        {`
+          @keyframes snowfall {
+            0% {
+              transform: translateY(0) translateX(0) rotate(0deg);
+            }
+            100% {
+              transform: translateY(1100px) translateX(${Math.random() * 200 - 100}px) rotate(360deg);
+            }
+          }
+        `}
+      </style>
+
       {/* 크리스마스 전구 장식 */}
       <svg
         style={{
@@ -185,7 +245,7 @@ export const BookSlideshow = () => {
           top: 0,
           left: 0,
           width: '100%',
-          height: '150px',
+          height: '200px',
           zIndex: 100,
           pointerEvents: 'none'
         }}
@@ -285,7 +345,7 @@ export const BookSlideshow = () => {
         })}
       </svg>
 
-      <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
+      <div ref={containerRef} style={{ width: '100%', height: '100%', position: 'relative', zIndex: 10 }} />
     </div>
   );
 };
