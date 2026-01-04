@@ -2,6 +2,11 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+<img width="1710" height="543" alt="Image" src="https://github.com/user-attachments/assets/02ed94f6-6404-4807-a9e8-e0c7c31e70af" />
+
+
+<img width="1710" height="539" alt="Image" src="https://github.com/user-attachments/assets/61f874ac-ff97-41ba-a437-f7d43bd5c06f" />
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
